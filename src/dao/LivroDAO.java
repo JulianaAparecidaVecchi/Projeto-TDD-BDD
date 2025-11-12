@@ -59,18 +59,19 @@ public class LivroDAO {
         return livros;
     }
 
-    // Método auxiliar para buscar livro por ID (útil para outras funcionalidades)
-    public Livro buscarPorId(int id, int idUsuario) {
-        String sql = "SELECT * FROM livro WHERE id = ? AND id_usuario = ?";
+    // Método auxiliar para buscar livro por Autor(útil para outras funcionalidades)
+    public List<Livro> buscarPorAutor(String nomeAutor, int id_usuario) {
+        List<Livro> livros= new ArrayList<>();
+        String sql = "SELECT * FROM livro WHERE autor = ? AND id_usuario = ?";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, id);
-            stmt.setInt(2, idUsuario);
+            stmt.setString(1, nomeAutor);
+            stmt.setInt(2, id_usuario);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
+            while (rs.next()) {
                 Livro livro = new Livro();
                 livro.setId(rs.getInt("id"));
                 livro.setTitulo(rs.getString("titulo"));
@@ -78,14 +79,15 @@ public class LivroDAO {
                 livro.setCategoria(rs.getString("categoria"));
                 livro.setStatusLeitura(rs.getString("status_leitura"));
                 livro.setIdUsuario(rs.getInt("id_usuario"));
-                return livro;
+                livros.add(livro);
+
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao buscar livro: " + e.getMessage());
+            System.out.println("Erro ao buscar livros: " + e.getMessage());
         }
+        return livros;
 
-        return null;
     }
 
     // Método para atualizar livro (para futuras funcionalidades)
