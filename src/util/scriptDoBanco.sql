@@ -9,6 +9,9 @@ CREATE TABLE usuario (
     senha VARCHAR(100) NOT NULL
 );
 
+INSERT INTO `usuario` (`id`, `nome`, `email`, `senha`) VALUES
+(1, 'Lucas', 'lucasboschiroli@gmail.com', '666Striker');
+
 -- Tabela de livros
 CREATE TABLE livro (
     id INT AUTO_INCREMENT PRIMARY KEY,

@@ -1,12 +1,16 @@
 package view;
 
 import controller.UsuarioController;
+import controller.LivroController;
 import model.Usuario;
+import model.Livro;
+import java.util.List;
 import java.util.Scanner;
 
 public class MenuView {
     private Scanner sc = new Scanner(System.in);
     private UsuarioController usuarioController = new UsuarioController();
+    private LivroController livroController = new LivroController();
 
     public void exibirMenuPrincipal() {
         int opcao;
@@ -28,6 +32,7 @@ public class MenuView {
         } while (opcao != 0);
     }
 
+    // RF01 - Cadastro de Usuários
     private void cadastrarUsuario() {
         System.out.println("\n--- Cadastro de Usuário ---");
         System.out.print("Nome: ");
@@ -47,6 +52,7 @@ public class MenuView {
         }
     }
 
+    // RF02 - Login de Usuários
     private void fazerLogin() {
         System.out.println("\n--- Login ---");
         System.out.print("E-mail: ");
@@ -81,37 +87,78 @@ public class MenuView {
             sc.nextLine();
 
             switch (opcao) {
-                case 1 :
-                    System.out.println("Essa funcionalidade será implementada em breve.");
-                    break;
-                case 2 :
-                    System.out.println("Essa funcionalidade será implementada em breve.");
-                    break;
-                case 3 :
-                    System.out.println("Essa funcionalidade será implementada em breve.");
-                    break;
-                case 4 :
-                    System.out.println("Essa funcionalidade será implementada em breve.");
-                    break;
-                case 5 :
-                    System.out.println("Essa funcionalidade será implementada em breve.");
-                    break;
-                case 6 :
-                    System.out.println("Essa funcionalidade será implementada em breve.");
-                    break;
-                case 7 :
-                    System.out.println("Essa funcionalidade será implementada em breve.");
-                    break;
-                case 8 :
-                    System.out.println("Essa funcionalidade será implementada em breve.");
-                    break;
-                case 0 :
-                    System.out.println("Saindo do menu do usuário...");
-                    break;
-                default :
-                    System.out.println("Opção inválida!");
-                    break;
+                case 1 -> cadastrarLivro(usuario);
+                case 2 -> listarLivros(usuario);
+                case 3 -> System.out.println("Essa funcionalidade será implementada em breve.");
+                case 4 -> System.out.println("Essa funcionalidade será implementada em breve.");
+                case 5 -> System.out.println("Essa funcionalidade será implementada em breve.");
+                case 6 -> System.out.println("Essa funcionalidade será implementada em breve.");
+                case 7 -> System.out.println("Essa funcionalidade será implementada em breve.");
+                case 8 -> System.out.println("Essa funcionalidade será implementada em breve.");
+                case 0 -> System.out.println("Saindo do menu do usuário...");
+                default -> System.out.println("Opção inválida!");
             }
         } while (opcao != 0);
+    }
+
+    // RF03 - Cadastro de livros
+    private void cadastrarLivro(Usuario usuario) {
+        System.out.println("\n--- Cadastrar Novo Livro ---");
+
+        System.out.print("Título: ");
+        String titulo = sc.nextLine();
+
+        System.out.print("Autor: ");
+        String autor = sc.nextLine();
+
+        System.out.print("Categoria/Gênero: ");
+        String categoria = sc.nextLine();
+
+        System.out.println("\nStatus de leitura:");
+        System.out.println("1 - Não lido");
+        System.out.println("2 - Lendo");
+        System.out.println("3 - Lido");
+        System.out.print("Escolha o status: ");
+        int statusOpcao = sc.nextInt();
+        sc.nextLine(); // limpa o buffer
+
+        String statusLeitura;
+        switch (statusOpcao) {
+            case 1 -> statusLeitura = "não lido";
+            case 2 -> statusLeitura = "lendo";
+            case 3 -> statusLeitura = "lido";
+            default -> {
+                System.out.println("Opção inválida! Definindo como 'não lido'.");
+                statusLeitura = "não lido";
+            }
+        }
+
+        boolean sucesso = livroController.cadastrarLivro(titulo, autor, categoria, statusLeitura, usuario.getId());
+
+        if (sucesso) {
+            System.out.println("\n✓ Livro cadastrado com sucesso no seu acervo pessoal!");
+        } else {
+            System.out.println("\n✗ Erro ao cadastrar o livro. Tente novamente.");
+        }
+    }
+
+    // RF04 - Lista de livros
+    private void listarLivros(Usuario usuario) {
+        System.out.println("\n--- Meus Livros ---");
+
+        List<Livro> livros = livroController.listarLivros(usuario.getId());
+
+        if (livros.isEmpty()) {
+            System.out.println("Você ainda não possui livros cadastrados.");
+            System.out.println("Cadastre seu primeiro livro na opção 1 do menu!");
+        } else {
+            System.out.println("\nTotal de livros: " + livros.size());
+            System.out.println("=".repeat(80));
+
+            for (Livro livro : livros) {
+                System.out.println(livro.toString());
+                System.out.println("-".repeat(80));
+            }
+        }
     }
 }
