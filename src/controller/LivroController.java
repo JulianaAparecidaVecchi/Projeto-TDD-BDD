@@ -30,9 +30,9 @@ public class LivroController {
         return livroDAO.listarLivrosPorUsuario(idUsuario);
     }
 
-    // Método auxiliar para buscar livros específicos (Rafael se quiser usar)
-    public Livro buscarLivro(int idLivro, int idUsuario) {
-        return livroDAO.buscarPorId(idLivro, idUsuario);
+     //Método auxiliar para buscar livros específicos (Rafael se quiser usar)
+    public List<Livro> buscarLivroPorAutor(String autor, int idUsuario) {
+        return livroDAO.buscarPorAutor(autor, idUsuario);
     }
 
     // Método para atualizar livros (Arthur se quiser usar)
