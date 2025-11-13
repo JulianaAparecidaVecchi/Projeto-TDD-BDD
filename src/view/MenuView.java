@@ -250,15 +250,7 @@ public class MenuView {
         System.out.println("   x Livros não lidos: " + relatorio.getLivrosNaoLidos() +
                 " (" + String.format("%.2f", relatorio.getPercentualNaoLidos()) + "%)");
         System.out.println();
-
-        System.out.println("AVALIAÇÕES:");
-        if (relatorio.getMediaNotas() > 0) {
-            System.out.println("   Média das notas: " + String.format("%.2f", relatorio.getMediaNotas()) + "/5.0");
-        } else {
-            System.out.println("   Nenhum livro avaliado ainda.");
-        }
-
-        System.out.println("\n" + "=".repeat(80));
+        
     }
 
 }
