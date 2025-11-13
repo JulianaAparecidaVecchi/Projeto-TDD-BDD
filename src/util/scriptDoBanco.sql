@@ -20,6 +20,7 @@ CREATE TABLE livro (
     categoria VARCHAR(100),
     status_leitura ENUM('não lido', 'lendo', 'lido') DEFAULT 'não lido',
     id_usuario INT,
+    comentario TEXT,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id)
 );
 

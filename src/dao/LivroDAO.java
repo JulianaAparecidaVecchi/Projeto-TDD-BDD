@@ -10,7 +10,7 @@ public class LivroDAO {
 
     // RF03 - Adicionar livro ao acervo pessoal
     public boolean salvarLivro(Livro livro) {
-        String sql = "INSERT INTO livro (titulo, autor, categoria, status_leitura, id_usuario) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO livro (titulo, autor, categoria, status_leitura, id_usuario, comentario) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -20,6 +20,7 @@ public class LivroDAO {
             stmt.setString(3, livro.getCategoria());
             stmt.setString(4, livro.getStatusLeitura());
             stmt.setInt(5, livro.getIdUsuario());
+            stmt.setString(6, livro.getComentario());
 
             stmt.executeUpdate();
             return true;
@@ -49,6 +50,7 @@ public class LivroDAO {
                 livro.setCategoria(rs.getString("categoria"));
                 livro.setStatusLeitura(rs.getString("status_leitura"));
                 livro.setIdUsuario(rs.getInt("id_usuario"));
+                livro.setComentario(rs.getString("comentario"));
                 livros.add(livro);
             }
 
@@ -79,6 +81,7 @@ public class LivroDAO {
                 livro.setCategoria(rs.getString("categoria"));
                 livro.setStatusLeitura(rs.getString("status_leitura"));
                 livro.setIdUsuario(rs.getInt("id_usuario"));
+                livro.setComentario(rs.getString("comentario"));
                 livros.add(livro);
 
             }
@@ -128,6 +131,23 @@ public class LivroDAO {
 
         } catch (SQLException e) {
             System.out.println("Erro ao remover livro: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean enviarComentario(String comentario, String nomeLivro, int idUsuario){
+        String sql = "UPDATE livro SET comentario = ? WHERE titulo = ? AND id_usuario = ?";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, comentario);
+            stmt.setString(2, nomeLivro);
+            stmt.setInt(3, idUsuario);
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas != 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar livro: " + e.getMessage());
             return false;
         }
     }

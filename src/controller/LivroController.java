@@ -56,4 +56,6 @@ public class LivroController {
     public boolean removerLivro(int idLivro, int idUsuario) {
         return livroDAO.removerLivro(idLivro, idUsuario);
     }
+
+    public boolean enviarComentario(String comentario, String nomeLivro, int idUsuario){return livroDAO.enviarComentario(comentario, nomeLivro, idUsuario);}
 }

@@ -6,6 +6,7 @@ public class Livro {
     private String autor;
     private String categoria;
     private String statusLeitura; // "não lido", "lendo", "lido"
+    private String comentario;
     private int idUsuario;
 
     public Livro() {}
@@ -16,6 +17,7 @@ public class Livro {
         this.categoria = categoria;
         this.statusLeitura = statusLeitura;
         this.idUsuario = idUsuario;
+        this.comentario = null;
     }
 
     // Getters e Setters
@@ -66,6 +68,10 @@ public class Livro {
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
     }
+
+    public void setComentario(String avaliacao) {this.comentario = avaliacao;}
+
+    public String getComentario() {return comentario;}
 
     @Override
     public String toString() {

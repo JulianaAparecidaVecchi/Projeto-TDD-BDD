@@ -84,7 +84,7 @@ public class MenuView {
             System.out.println("3 - Editar livro");
             System.out.println("4 - Remover livro");
             System.out.println("5 - Buscar por autor");
-            System.out.println("6 - Buscar por categoria");
+            System.out.println("6 - Enviar comentário sobre o livro");
             System.out.println("7 - Avaliar livro");
             System.out.println("8 - Gerar relatório");
             System.out.println("0 - Logout");
@@ -97,8 +97,8 @@ public class MenuView {
                 case 2 -> listarLivros(usuario);
                 case 3 -> editarLivro(usuario);
                 case 4 -> removerLivro(usuario);
-                case 5 -> System.out.println("Essa funcionalidade será implementada em breve.");
-                case 6 -> System.out.println("Essa funcionalidade será implementada em breve.");
+                case 5 -> buscarPorAutor(usuario);
+                case 6 -> enviarComentarioSobreOLivro(usuario);
                 case 7 -> avaliarLivro(usuario);
                 case 8 -> gerarRelatorio(usuario);
                 case 0 -> System.out.println("Saindo do menu do usuário...");
@@ -387,6 +387,41 @@ public class MenuView {
         System.out.println("   x Livros não lidos: " + relatorio.getLivrosNaoLidos() +
                 " (" + String.format("%.2f", relatorio.getPercentualNaoLidos()) + "%)");
         System.out.println();
+    }
+
+    private void buscarPorAutor(Usuario usuario){
+        System.out.println("\n --Buscar livro por autor -- ");
+        String autor;
+        System.out.println("Digite o nome de um autor em sua biblioteca: ");
+        autor = sc.nextLine();
+        List<Livro> livros =  livroController.buscarLivroPorAutor(autor, usuario.getId());
+        if (livros.isEmpty()) {
+            System.out.println("Não foi encontrado nenhum livro com este autor.");
+        } else {
+            System.out.println("\nLivros de : " + autor);
+
+            for (Livro livro : livros) {
+                System.out.println(livro.toString());
+                System.out.println("-".repeat(80));
+            }
+        }
+    }
+
+    private void enviarComentarioSobreOLivro(Usuario usuario){
+        System.out.println("\n --Enviar comentario sobre o livro--");
+        System.out.println("Escreva o nome do livro para enviar o comentário: ");
+        String nomeLivro;
+        nomeLivro = sc.nextLine();
+        System.out.println("\nEscreva o comentário: ");
+        String comentario;
+        comentario = sc.nextLine();
+        boolean resultado = livroController.enviarComentario(comentario, nomeLivro, usuario.getId());
+        if (resultado){
+            System.out.println("Comentário enviado com sucesso!");
+        }
+        else {
+            System.out.println("Ocorreu um erro.Nenhum livro foi encontrado para enviar a mensagem.");
+        }
     }
 
 }
