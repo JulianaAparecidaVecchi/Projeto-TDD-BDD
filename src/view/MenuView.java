@@ -168,7 +168,7 @@ public class MenuView {
         }
     }
 
-    // RF05 - Editar livro
+    // RF05 - Edição de livros
     private void editarLivro(Usuario usuario) {
         System.out.println("\n--- Editar Livro ---");
 
@@ -258,7 +258,7 @@ public class MenuView {
         }
     }
 
-    // RF06 - Remover livro
+    // RF06 - Remoção de livros
     private void removerLivro(Usuario usuario) {
         System.out.println("\n--- Remover Livro ---");
 
@@ -304,7 +304,44 @@ public class MenuView {
         }
     }
 
-    // RF07 - Avaliação de livros
+    // RF07 - Busca por autor
+    private void buscarPorAutor(Usuario usuario){
+        System.out.println("\n --Buscar livro por autor -- ");
+        String autor;
+        System.out.println("Digite o nome de um autor em sua biblioteca: ");
+        autor = sc.nextLine();
+        List<Livro> livros =  livroController.buscarLivroPorAutor(autor, usuario.getId());
+        if (livros.isEmpty()) {
+            System.out.println("Não foi encontrado nenhum livro com este autor.");
+        } else {
+            System.out.println("\nLivros de : " + autor);
+
+            for (Livro livro : livros) {
+                System.out.println(livro.toString());
+                System.out.println("-".repeat(80));
+            }
+        }
+    }
+
+    // RF08 - Comentário sobre o livro
+    private void enviarComentarioSobreOLivro(Usuario usuario){
+        System.out.println("\n --Enviar comentario sobre o livro--");
+        System.out.println("Escreva o nome do livro para enviar o comentário: ");
+        String nomeLivro;
+        nomeLivro = sc.nextLine();
+        System.out.println("\nEscreva o comentário: ");
+        String comentario;
+        comentario = sc.nextLine();
+        boolean resultado = livroController.enviarComentario(comentario, nomeLivro, usuario.getId());
+        if (resultado){
+            System.out.println("Comentário enviado com sucesso!");
+        }
+        else {
+            System.out.println("Ocorreu um erro.Nenhum livro foi encontrado para enviar a mensagem.");
+        }
+    }
+
+    // RF09 - Avaliação de livros
     private void avaliarLivro(Usuario usuario) {
         System.out.println("\n--- Avaliar Livro ---");
 
@@ -354,7 +391,7 @@ public class MenuView {
         System.out.println("\n" + resultado);
     }
 
-    // RF08 - Relatórios de leitura
+    // RF10 - Relatórios de leitura
     private void gerarRelatorio(Usuario usuario) {
         System.out.println("\n--- Relatório de Leitura ---");
 
@@ -387,41 +424,6 @@ public class MenuView {
         System.out.println("   x Livros não lidos: " + relatorio.getLivrosNaoLidos() +
                 " (" + String.format("%.2f", relatorio.getPercentualNaoLidos()) + "%)");
         System.out.println();
-    }
-
-    private void buscarPorAutor(Usuario usuario){
-        System.out.println("\n --Buscar livro por autor -- ");
-        String autor;
-        System.out.println("Digite o nome de um autor em sua biblioteca: ");
-        autor = sc.nextLine();
-        List<Livro> livros =  livroController.buscarLivroPorAutor(autor, usuario.getId());
-        if (livros.isEmpty()) {
-            System.out.println("Não foi encontrado nenhum livro com este autor.");
-        } else {
-            System.out.println("\nLivros de : " + autor);
-
-            for (Livro livro : livros) {
-                System.out.println(livro.toString());
-                System.out.println("-".repeat(80));
-            }
-        }
-    }
-
-    private void enviarComentarioSobreOLivro(Usuario usuario){
-        System.out.println("\n --Enviar comentario sobre o livro--");
-        System.out.println("Escreva o nome do livro para enviar o comentário: ");
-        String nomeLivro;
-        nomeLivro = sc.nextLine();
-        System.out.println("\nEscreva o comentário: ");
-        String comentario;
-        comentario = sc.nextLine();
-        boolean resultado = livroController.enviarComentario(comentario, nomeLivro, usuario.getId());
-        if (resultado){
-            System.out.println("Comentário enviado com sucesso!");
-        }
-        else {
-            System.out.println("Ocorreu um erro.Nenhum livro foi encontrado para enviar a mensagem.");
-        }
     }
 
 }
