@@ -2,14 +2,13 @@ package test;
 
 import controller.LivroController;
 import controller.UsuarioController;
-import model.Livro;
 import model.Usuario;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 
-public class livroEnviarComentarioTeste {
+public class LivroEnviarComentarioTeste {
     private LivroController livroController;
     private UsuarioController usuarioController;
     private Usuario usuarioLogado;
