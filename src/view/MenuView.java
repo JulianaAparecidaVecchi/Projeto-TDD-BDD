@@ -95,8 +95,8 @@ public class MenuView {
             switch (opcao) {
                 case 1 -> cadastrarLivro(usuario);
                 case 2 -> listarLivros(usuario);
-                case 3 -> System.out.println("Essa funcionalidade será implementada em breve.");
-                case 4 -> System.out.println("Essa funcionalidade será implementada em breve.");
+                case 3 -> editarLivro(usuario);
+                case 4 -> removerLivro(usuario);
                 case 5 -> System.out.println("Essa funcionalidade será implementada em breve.");
                 case 6 -> System.out.println("Essa funcionalidade será implementada em breve.");
                 case 7 -> avaliarLivro(usuario);
@@ -167,6 +167,143 @@ public class MenuView {
             }
         }
     }
+
+    // RF05 - Editar livro
+    private void editarLivro(Usuario usuario) {
+        System.out.println("\n--- Editar Livro ---");
+
+        List<Livro> livros = livroController.listarLivros(usuario.getId());
+
+        if (livros.isEmpty()) {
+            System.out.println("Você ainda não possui livros cadastrados para editar.");
+            return;
+        }
+
+        System.out.println("\nLivros disponíveis:");
+        System.out.println("=".repeat(80));
+
+        for (int i = 0; i < livros.size(); i++) {
+            Livro livro = livros.get(i);
+            System.out.println((i + 1) + " - " + livro.getTitulo() + " | Autor: " + livro.getAutor() + " | Status: " + livro.getStatusLeitura());
+        }
+
+        System.out.print("\nEscolha o número do livro que deseja editar: ");
+        int escolha = sc.nextInt();
+        sc.nextLine(); // limpar buffer
+
+        if (escolha < 1 || escolha > livros.size()) {
+            System.out.println("Opção inválida!");
+            return;
+        }
+
+        Livro livroSelecionado = livros.get(escolha - 1);
+
+        System.out.println("\n--- Editando: " + livroSelecionado.getTitulo() + " ---");
+        System.out.println("(Pressione ENTER para manter o valor atual)");
+
+        System.out.print("Novo título [" + livroSelecionado.getTitulo() + "]: ");
+        String novoTitulo = sc.nextLine();
+        if (novoTitulo.trim().isEmpty()) {
+            novoTitulo = livroSelecionado.getTitulo();
+        }
+
+        System.out.print("Novo autor [" + livroSelecionado.getAutor() + "]: ");
+        String novoAutor = sc.nextLine();
+        if (novoAutor.trim().isEmpty()) {
+            novoAutor = livroSelecionado.getAutor();
+        }
+
+        System.out.print("Nova categoria [" + livroSelecionado.getCategoria() + "]: ");
+        String novaCategoria = sc.nextLine();
+        if (novaCategoria.trim().isEmpty()) {
+            novaCategoria = livroSelecionado.getCategoria();
+        }
+
+        System.out.println("\nNovo status de leitura:");
+        System.out.println("1 - Não lido");
+        System.out.println("2 - Lendo");
+        System.out.println("3 - Lido");
+        System.out.print("Escolha o status [atual: " + livroSelecionado.getStatusLeitura() + "]: ");
+        String statusInput = sc.nextLine();
+
+        String novoStatus;
+        if (statusInput.trim().isEmpty()) {
+            novoStatus = livroSelecionado.getStatusLeitura();
+        } else {
+            int statusOpcao = Integer.parseInt(statusInput);
+            switch (statusOpcao) {
+                case 1 -> novoStatus = "não lido";
+                case 2 -> novoStatus = "lendo";
+                case 3 -> novoStatus = "lido";
+                default -> {
+                    System.out.println("Opção inválida! Mantendo status atual.");
+                    novoStatus = livroSelecionado.getStatusLeitura();
+                }
+            }
+        }
+
+        boolean sucesso = livroController.atualizarLivro(
+                livroSelecionado.getId(),
+                novoTitulo,
+                novoAutor,
+                novaCategoria,
+                novoStatus,
+                usuario.getId()
+        );
+
+        if (sucesso) {
+            System.out.println("\n✓ Livro atualizado com sucesso!");
+        } else {
+            System.out.println("\n✗ Erro ao atualizar o livro. Tente novamente.");
+        }
+    }
+
+    // RF06 - Remover livro
+    private void removerLivro(Usuario usuario) {
+        System.out.println("\n--- Remover Livro ---");
+
+        List<Livro> livros = livroController.listarLivros(usuario.getId());
+
+        if (livros.isEmpty()) {
+            System.out.println("Você ainda não possui livros cadastrados para remover.");
+            return;
+        }
+
+        System.out.println("\nLivros disponíveis:");
+        System.out.println("=".repeat(80));
+
+        for (int i = 0; i < livros.size(); i++) {
+            Livro livro = livros.get(i);
+            System.out.println((i + 1) + " - " + livro.getTitulo() + " | Autor: " + livro.getAutor());
+        }
+
+        System.out.print("\nEscolha o número do livro que deseja remover: ");
+        int escolha = sc.nextInt();
+        sc.nextLine(); // limpar buffer
+
+        if (escolha < 1 || escolha > livros.size()) {
+            System.out.println("Opção inválida!");
+            return;
+        }
+
+        Livro livroSelecionado = livros.get(escolha - 1);
+
+        System.out.print("\nTem certeza que deseja remover \"" + livroSelecionado.getTitulo() + "\"? (S/N): ");
+        String confirmacao = sc.nextLine();
+
+        if (confirmacao.equalsIgnoreCase("S")) {
+            boolean sucesso = livroController.removerLivro(livroSelecionado.getId(), usuario.getId());
+
+            if (sucesso) {
+                System.out.println("\n✓ Livro removido com sucesso!");
+            } else {
+                System.out.println("\n✗ Erro ao remover o livro. Tente novamente.");
+            }
+        } else {
+            System.out.println("\nRemoção cancelada.");
+        }
+    }
+
     // RF07 - Avaliação de livros
     private void avaliarLivro(Usuario usuario) {
         System.out.println("\n--- Avaliar Livro ---");
@@ -250,7 +387,6 @@ public class MenuView {
         System.out.println("   x Livros não lidos: " + relatorio.getLivrosNaoLidos() +
                 " (" + String.format("%.2f", relatorio.getPercentualNaoLidos()) + "%)");
         System.out.println();
-        
     }
 
 }
