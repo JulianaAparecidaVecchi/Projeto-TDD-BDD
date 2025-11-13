@@ -2,15 +2,21 @@ package view;
 
 import controller.UsuarioController;
 import controller.LivroController;
+import controller.AvaliacaoController;
+import controller.RelatorioController;
 import model.Usuario;
 import model.Livro;
+import model.RelatorioLeitura;
 import java.util.List;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class MenuView {
     private Scanner sc = new Scanner(System.in);
     private UsuarioController usuarioController = new UsuarioController();
     private LivroController livroController = new LivroController();
+    private AvaliacaoController avaliacaoController = new AvaliacaoController();
+    private RelatorioController relatorioController = new RelatorioController();
 
     public void exibirMenuPrincipal() {
         int opcao;
@@ -93,8 +99,8 @@ public class MenuView {
                 case 4 -> System.out.println("Essa funcionalidade será implementada em breve.");
                 case 5 -> System.out.println("Essa funcionalidade será implementada em breve.");
                 case 6 -> System.out.println("Essa funcionalidade será implementada em breve.");
-                case 7 -> System.out.println("Essa funcionalidade será implementada em breve.");
-                case 8 -> System.out.println("Essa funcionalidade será implementada em breve.");
+                case 7 -> avaliarLivro(usuario);
+                case 8 -> gerarRelatorio(usuario);
                 case 0 -> System.out.println("Saindo do menu do usuário...");
                 default -> System.out.println("Opção inválida!");
             }
@@ -161,4 +167,98 @@ public class MenuView {
             }
         }
     }
+    // RF07 - Avaliação de livros
+    private void avaliarLivro(Usuario usuario) {
+        System.out.println("\n--- Avaliar Livro ---");
+
+        // Primeiro, listar os livros do usuário
+        List<Livro> livros = livroController.listarLivros(usuario.getId());
+
+        if (livros.isEmpty()) {
+            System.out.println("Você ainda não possui livros cadastrados para avaliar.");
+            return;
+        }
+
+        // Mostrar apenas livros com status "lido"
+        List<Livro> livrosLidos = new ArrayList<>();
+        System.out.println("\nLivros disponíveis para avaliação (apenas livros lidos):");
+        System.out.println("=".repeat(80));
+
+        for (Livro livro : livros) {
+            if ("lido".equalsIgnoreCase(livro.getStatusLeitura()) ||
+                    "LIDO".equalsIgnoreCase(livro.getStatusLeitura())) {
+                livrosLidos.add(livro);
+                System.out.println((livrosLidos.size()) + " - " + livro.getTitulo() + " | Autor: " + livro.getAutor());
+            }
+        }
+
+        if (livrosLidos.isEmpty()) {
+            System.out.println("Você não possui livros com status 'lido' para avaliar.");
+            System.out.println("Altere o status de um livro para 'lido' antes de avaliá-lo.");
+            return;
+        }
+
+        System.out.print("\nEscolha o número do livro que deseja avaliar: ");
+        int escolha = sc.nextInt();
+        sc.nextLine(); // limpar buffer
+
+        if (escolha < 1 || escolha > livrosLidos.size()) {
+            System.out.println("Opção inválida!");
+            return;
+        }
+
+        Livro livroSelecionado = livrosLidos.get(escolha - 1);
+
+        System.out.print("\nDigite a nota (0 a 5): ");
+        int nota = sc.nextInt();
+        sc.nextLine(); // limpar buffer
+
+        String resultado = avaliacaoController.registrarAvaliacao(livroSelecionado, usuario, nota);
+        System.out.println("\n" + resultado);
+    }
+
+    // RF08 - Relatórios de leitura
+    private void gerarRelatorio(Usuario usuario) {
+        System.out.println("\n--- Relatório de Leitura ---");
+
+        // Buscar todos os livros do usuário
+        List<Livro> livros = livroController.listarLivros(usuario.getId());
+
+        if (livros.isEmpty()) {
+            System.out.println("Você ainda não possui livros cadastrados.");
+            System.out.println("Cadastre seus livros para visualizar o relatório!");
+            return;
+        }
+
+        // Gerar o relatório
+        RelatorioLeitura relatorio = relatorioController.gerarRelatorio(usuario, livros);
+
+        // Exibir o relatório formatado
+        System.out.println("\n" + "=".repeat(80));
+        System.out.println("                    RELATÓRIO DE LEITURA");
+        System.out.println("=".repeat(80));
+
+        System.out.println("\n ESTATÍSTICAS GERAIS:");
+        System.out.println("   Total de livros cadastrados: " + relatorio.getTotalLivros());
+        System.out.println();
+
+        System.out.println("DISTRIBUIÇÃO POR STATUS:");
+        System.out.println("   ✓ Livros lidos: " + relatorio.getLivrosLidos() +
+                " (" + String.format("%.2f", relatorio.getPercentualLidos()) + "%)");
+        System.out.println("   Livros em leitura: " + relatorio.getLivrosEmLeitura() +
+                " (" + String.format("%.2f", relatorio.getPercentualEmLeitura()) + "%)");
+        System.out.println("   x Livros não lidos: " + relatorio.getLivrosNaoLidos() +
+                " (" + String.format("%.2f", relatorio.getPercentualNaoLidos()) + "%)");
+        System.out.println();
+
+        System.out.println("AVALIAÇÕES:");
+        if (relatorio.getMediaNotas() > 0) {
+            System.out.println("   Média das notas: " + String.format("%.2f", relatorio.getMediaNotas()) + "/5.0");
+        } else {
+            System.out.println("   Nenhum livro avaliado ainda.");
+        }
+
+        System.out.println("\n" + "=".repeat(80));
+    }
+
 }
